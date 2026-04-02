@@ -1,0 +1,64 @@
+# ===========================================
+# Render Blueprint - СПС Голосовая Студия
+# Автоматический деплой с GitHub
+# ===========================================
+
+services:
+  # ===========================================
+  # Web Service: Next.js + Python TTS
+  # ===========================================
+  - type: web
+    name: tts-voice-studio
+    runtime: docker
+    dockerfilePath: ./Dockerfile.render
+    dockerContext: .
+    
+    # Ресурсы
+    plan: starter  # free tier, можно изменить на 'starter' ($7/мес)
+    region: frankfurt  # oregon, frankfurt, singapore, ohio
+    
+    # Health check
+    healthCheckPath: /api/auth
+    
+    # Переменные окружения
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_TELEMETRY_DISABLED
+        value: "1"
+      - key: PYTHONIOENCODING
+        value: utf-8
+      - key: TTS_SERVICE_URL
+        value: http://localhost:3031
+      - key: APP_PASSWORD
+        generateValue: true  # Render сгенерирует безопасный пароль
+      - key: SESSION_SECRET
+        generateValue: true  # Render сгенерирует безопасный секрет
+      - key: DATABASE_URL
+        fromDatabase:
+          name: tts-db
+          property: connectionString
+
+# ===========================================
+# PostgreSQL Database
+# ===========================================
+databases:
+  - name: tts-db
+    databaseName: tts_studio
+    user: tts_user
+    plan: free  # бесплатно, 90 дней срок действия
+    region: frankfurt
+
+# ===========================================
+# Дополнительно (опционально):
+# Cron job для очистки старых аудио
+# ===========================================
+# - type: cron
+#   name: cleanup-audio
+#   runtime: docker
+#   dockerfilePath: ./Dockerfile.render
+#   schedule: "0 3 * * *"  # каждый день в 3:00 UTC
+#   dockerCommand: python3 /app/tts-service/cleanup_audio.py --days 30
+#   envVars:
+#     - key: PYTHONIOENCODING
+#       value: utf-8
