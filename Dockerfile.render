@@ -61,8 +61,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy Python TTS service
+# Copy Python packages from builder
 COPY --from=tts-builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
+
+# Copy TTS service
 COPY --from=tts-builder /tts-service /app/tts-service
 
 # Copy Next.js application
@@ -77,7 +79,7 @@ RUN mkdir -p /app/public/audio /app/data && \
 set -e\n\
 echo "Starting TTS service..."\n\
 cd /app/tts-service && PYTHONIOENCODING=utf-8 python3 index.py &\n\
-sleep 3\n\
+sleep 5\n\
 echo "Starting Next.js server..."\n\
 cd /app && bun server.js\n\
 ' > /app/start.sh && chmod +x /app/start.sh
