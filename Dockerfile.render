@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 COPY mini-services/tts-service/requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --target=/python-packages -r requirements.txt
 
 COPY mini-services/tts-service/index.py ./
 COPY mini-services/tts-service/cleanup_audio.py ./
@@ -61,8 +61,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy Python packages from builder
-COPY --from=tts-builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
+# Copy Python packages
+COPY --from=tts-builder /python-packages /python-packages
+ENV PYTHONPATH="/python-packages:$PYTHONPATH"
 
 # Copy TTS service
 COPY --from=tts-builder /tts-service /app/tts-service
@@ -78,8 +79,10 @@ RUN mkdir -p /app/public/audio /app/data && \
     echo '#!/bin/bash\n\
 set -e\n\
 echo "Starting TTS service..."\n\
-cd /app/tts-service && PYTHONIOENCODING=utf-8 python3 index.py &\n\
+cd /app/tts-service && PYTHONIOENCODING=utf-8 PYTHONPATH=/python-packages python3 index.py &\n\
 sleep 5\n\
+echo "Running Prisma migrations..."\n\
+cd /app && bunx prisma db push --skip-generate || true\n\
 echo "Starting Next.js server..."\n\
 cd /app && bun server.js\n\
 ' > /app/start.sh && chmod +x /app/start.sh
@@ -88,6 +91,7 @@ ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV PYTHONIOENCODING=utf-8
 ENV TTS_SERVICE_URL=http://localhost:3031
+ENV DATABASE_URL=file:/app/data/tts.db
 
 EXPOSE 3000
 
