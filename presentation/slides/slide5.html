@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+html { background: #FFFFFF; }
+body {
+  width: 720pt; height: 405pt; margin: 0; padding: 0;
+  font-family: Arial, sans-serif;
+  display: flex; flex-direction: column;
+  background: #FFFFFF;
+}
+.header {
+  background: #0066CC;
+  padding: 15pt 30pt;
+}
+.header-title {
+  color: #FFFFFF;
+  font-size: 24pt;
+  font-weight: bold;
+  margin: 0;
+}
+.content {
+  display: flex;
+  padding: 18pt 30pt;
+  gap: 25pt;
+}
+.left-col { flex: 1.2; }
+.right-col {
+  flex: 0.8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.spec-group { margin-bottom: 12pt; }
+.spec-title {
+  color: #0066CC;
+  font-size: 12pt;
+  font-weight: bold;
+  margin: 0 0 6pt 0;
+}
+.spec-row {
+  display: flex;
+  padding: 4pt 0;
+  border-bottom: 1pt solid #EEEEEE;
+}
+.spec-label {
+  color: #666666;
+  font-size: 10pt;
+  width: 120pt;
+  margin: 0;
+}
+.spec-value {
+  color: #333333;
+  font-size: 10pt;
+  font-weight: bold;
+  margin: 0;
+}
+.badge {
+  background: #0066CC;
+  color: #FFFFFF;
+  padding: 12pt 20pt;
+  border-radius: 6pt;
+  text-align: center;
+  margin-top: 12pt;
+}
+.badge-title {
+  font-size: 10pt;
+  margin: 0 0 4pt 0;
+}
+.badge-value {
+  font-size: 16pt;
+  font-weight: bold;
+  margin: 0;
+}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1 class="header-title">Стандарт АИ-22</h1>
+</div>
+<div class="content">
+  <div class="left-col">
+    <div class="spec-group">
+      <p class="spec-title">Формат аудио</p>
+      <div class="spec-row">
+        <p class="spec-label">Формат</p>
+        <p class="spec-value">MP3</p>
+      </div>
+      <div class="spec-row">
+        <p class="spec-label">Частота</p>
+        <p class="spec-value">44100 Гц</p>
+      </div>
+      <div class="spec-row">
+        <p class="spec-label">Битрейт</p>
+        <p class="spec-value">CBR 128 кбит/с</p>
+      </div>
+      <div class="spec-row">
+        <p class="spec-label">Кодек</p>
+        <p class="spec-value">LAME</p>
+      </div>
+      <div class="spec-row">
+        <p class="spec-label">Каналы</p>
+        <p class="spec-value">Моно</p>
+      </div>
+    </div>
+    <div class="spec-group">
+      <p class="spec-title">Нормализация</p>
+      <div class="spec-row">
+        <p class="spec-label">LUFS</p>
+        <p class="spec-value">-23 ±0.5 LU</p>
+      </div>
+      <div class="spec-row">
+        <p class="spec-label">True Peak</p>
+        <p class="spec-value">≤ -1 dBTP</p>
+      </div>
+      <div class="spec-row">
+        <p class="spec-label">LRA</p>
+        <p class="spec-value">≤ 5 LU</p>
+      </div>
+    </div>
+  </div>
+  <div class="right-col">
+    <img src="/home/z/my-project/presentation/slides/standard-icon.png" style="width: 80pt; height: 80pt; opacity: 0.7;">
+    <div class="badge">
+      <p class="badge-title">Профессиональный стандарт</p>
+      <p class="badge-value">АИ-22</p>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,57 @@
+# ===========================================
+# Production Overrides for Docker Compose
+# ===========================================
+# Usage: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+# ===========================================
+
+services:
+  app:
+    environment:
+      - NODE_ENV=production
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 512M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  tts-service:
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 1G
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ===========================================
+  # Caddy Reverse Proxy (Optional)
+  # ===========================================
+  # caddy:
+  #   image: caddy:2-alpine
+  #   container_name: tts-caddy
+  #   restart: unless-stopped
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - ./Caddyfile:/etc/caddy/Caddyfile
+  #     - caddy-data:/data
+  #     - caddy-config:/config
+  #   networks:
+  #     - tts-network
+  #   depends_on:
+  #     - app
+
+# volumes:
+#   caddy-data:
+#   caddy-config:

@@ -1,0 +1,53 @@
+Requirement already satisfied: typing-extensions in ./tts-env/lib/python3.12/site-packages (4.15.0)
+Requirement already satisfied: einops in ./tts-env/lib/python3.12/site-packages (0.8.2)
+Collecting encodec
+  Downloading encodec-0.1.1.tar.gz (3.7 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.7/3.7 MB 126.5 MB/s  0:00:00
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Requirement already satisfied: soundfile in ./tts-env/lib/python3.12/site-packages (0.13.1)
+Requirement already satisfied: librosa in ./tts-env/lib/python3.12/site-packages (0.11.0)
+Requirement already satisfied: numpy in ./tts-env/lib/python3.12/site-packages (from encodec) (2.4.3)
+Requirement already satisfied: torch in ./tts-env/lib/python3.12/site-packages (from encodec) (2.10.0+cpu)
+Requirement already satisfied: torchaudio in ./tts-env/lib/python3.12/site-packages (from encodec) (2.10.0+cpu)
+Requirement already satisfied: cffi>=1.0 in ./tts-env/lib/python3.12/site-packages (from soundfile) (2.0.0)
+Requirement already satisfied: audioread>=2.1.9 in ./tts-env/lib/python3.12/site-packages (from librosa) (3.1.0)
+Requirement already satisfied: numba>=0.51.0 in ./tts-env/lib/python3.12/site-packages (from librosa) (0.64.0)
+Requirement already satisfied: scipy>=1.6.0 in ./tts-env/lib/python3.12/site-packages (from librosa) (1.17.1)
+Requirement already satisfied: scikit-learn>=1.1.0 in ./tts-env/lib/python3.12/site-packages (from librosa) (1.8.0)
+Requirement already satisfied: joblib>=1.0 in ./tts-env/lib/python3.12/site-packages (from librosa) (1.5.3)
+Requirement already satisfied: decorator>=4.3.0 in ./tts-env/lib/python3.12/site-packages (from librosa) (5.2.1)
+Requirement already satisfied: pooch>=1.1 in ./tts-env/lib/python3.12/site-packages (from librosa) (1.9.0)
+Requirement already satisfied: soxr>=0.3.2 in ./tts-env/lib/python3.12/site-packages (from librosa) (1.0.0)
+Requirement already satisfied: lazy_loader>=0.1 in ./tts-env/lib/python3.12/site-packages (from librosa) (0.5)
+Requirement already satisfied: msgpack>=1.0 in ./tts-env/lib/python3.12/site-packages (from librosa) (1.1.2)
+Requirement already satisfied: pycparser in ./tts-env/lib/python3.12/site-packages (from cffi>=1.0->soundfile) (3.0)
+Requirement already satisfied: packaging in ./tts-env/lib/python3.12/site-packages (from lazy_loader>=0.1->librosa) (26.0)
+Requirement already satisfied: llvmlite<0.47,>=0.46.0dev0 in ./tts-env/lib/python3.12/site-packages (from numba>=0.51.0->librosa) (0.46.0)
+Requirement already satisfied: platformdirs>=2.5.0 in ./tts-env/lib/python3.12/site-packages (from pooch>=1.1->librosa) (4.9.4)
+Requirement already satisfied: requests>=2.19.0 in ./tts-env/lib/python3.12/site-packages (from pooch>=1.1->librosa) (2.32.5)
+Requirement already satisfied: charset_normalizer<4,>=2 in ./tts-env/lib/python3.12/site-packages (from requests>=2.19.0->pooch>=1.1->librosa) (3.4.6)
+Requirement already satisfied: idna<4,>=2.5 in ./tts-env/lib/python3.12/site-packages (from requests>=2.19.0->pooch>=1.1->librosa) (3.11)
+Requirement already satisfied: urllib3<3,>=1.21.1 in ./tts-env/lib/python3.12/site-packages (from requests>=2.19.0->pooch>=1.1->librosa) (2.6.3)
+Requirement already satisfied: certifi>=2017.4.17 in ./tts-env/lib/python3.12/site-packages (from requests>=2.19.0->pooch>=1.1->librosa) (2026.2.25)
+Requirement already satisfied: threadpoolctl>=3.2.0 in ./tts-env/lib/python3.12/site-packages (from scikit-learn>=1.1.0->librosa) (3.6.0)
+Requirement already satisfied: filelock in ./tts-env/lib/python3.12/site-packages (from torch->encodec) (3.25.2)
+Requirement already satisfied: setuptools in ./tts-env/lib/python3.12/site-packages (from torch->encodec) (82.0.1)
+Requirement already satisfied: sympy>=1.13.3 in ./tts-env/lib/python3.12/site-packages (from torch->encodec) (1.14.0)
+Requirement already satisfied: networkx>=2.5.1 in ./tts-env/lib/python3.12/site-packages (from torch->encodec) (3.6.1)
+Requirement already satisfied: jinja2 in ./tts-env/lib/python3.12/site-packages (from torch->encodec) (3.1.6)
+Requirement already satisfied: fsspec>=0.8.5 in ./tts-env/lib/python3.12/site-packages (from torch->encodec) (2026.2.0)
+Requirement already satisfied: mpmath<1.4,>=1.1.0 in ./tts-env/lib/python3.12/site-packages (from sympy>=1.13.3->torch->encodec) (1.3.0)
+Requirement already satisfied: MarkupSafe>=2.0 in ./tts-env/lib/python3.12/site-packages (from jinja2->torch->encodec) (3.0.3)
+Building wheels for collected packages: encodec
+  Building wheel for encodec (pyproject.toml): started
+  Building wheel for encodec (pyproject.toml): finished with status 'done'
+  Created wheel for encodec: filename=encodec-0.1.1-py3-none-any.whl size=45852 sha256=574877b9c2022c91e988e7e1fc6ba501021f47b91d1cb4e33876e7d4c7de25fa
+  Stored in directory: /home/z/.cache/pip/wheels/b8/eb/9f/e13610cc46ab39d3199fbabebd1c3e142d44b679526e0f228a
+Successfully built encodec
+Installing collected packages: encodec
+Successfully installed encodec-0.1.1

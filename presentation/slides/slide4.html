@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+html { background: #FFFFFF; }
+body {
+  width: 720pt; height: 405pt; margin: 0; padding: 0;
+  font-family: Arial, sans-serif;
+  display: flex; flex-direction: column;
+  background: #FFFFFF;
+}
+.header {
+  background: #0066CC;
+  padding: 12pt 30pt;
+}
+.header-title {
+  color: #FFFFFF;
+  font-size: 22pt;
+  font-weight: bold;
+  margin: 0;
+}
+.content {
+  display: flex;
+  padding: 12pt 25pt;
+  gap: 20pt;
+}
+.col { flex: 1; }
+.section-header {
+  border-bottom: 2pt solid #0066CC;
+  margin-bottom: 10pt;
+  padding-bottom: 4pt;
+}
+.section-title {
+  color: #0066CC;
+  font-size: 13pt;
+  font-weight: bold;
+  margin: 0;
+}
+.voice-item {
+  display: flex;
+  align-items: center;
+  margin: 6pt 0;
+  padding: 5pt 8pt;
+  background: #F5F7FA;
+  border-radius: 4pt;
+}
+.voice-emoji {
+  font-size: 14pt;
+  margin-right: 8pt;
+}
+.voice-name {
+  color: #333333;
+  font-size: 10pt;
+  font-weight: bold;
+  margin: 0;
+  flex: 1;
+}
+.voice-desc {
+  color: #777777;
+  font-size: 9pt;
+  margin: 0;
+}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1 class="header-title">Доступные голоса</h1>
+</div>
+<div class="content">
+  <div class="col">
+    <div class="section-header">
+      <p class="section-title">Мужские голоса</p>
+    </div>
+    <div class="voice-item">
+      <p class="voice-emoji">👨‍💼</p>
+      <p class="voice-name">Дмитрий</p>
+      <p class="voice-desc">Профессиональный</p>
+    </div>
+    <div class="voice-item">
+      <p class="voice-emoji">🎙️</p>
+      <p class="voice-name">Дмитрий Pro</p>
+      <p class="voice-desc">С эмоциями</p>
+    </div>
+    <div class="voice-item">
+      <p class="voice-emoji">🧔</p>
+      <p class="voice-name">Олег</p>
+      <p class="voice-desc">С характером</p>
+    </div>
+    <div class="voice-item">
+      <p class="voice-emoji">🎩</p>
+      <p class="voice-name">Филипп</p>
+      <p class="voice-desc">Спокойный</p>
+    </div>
+  </div>
+  <div class="col">
+    <div class="section-header">
+      <p class="section-title">Женские голоса</p>
+    </div>
+    <div class="voice-item">
+      <p class="voice-emoji">👩‍💼</p>
+      <p class="voice-name">Светлана</p>
+      <p class="voice-desc">Профессиональный</p>
+    </div>
+    <div class="voice-item">
+      <p class="voice-emoji">🎤</p>
+      <p class="voice-name">Светлана Pro</p>
+      <p class="voice-desc">С эмоциями</p>
+    </div>
+    <div class="voice-item">
+      <p class="voice-emoji">👩</p>
+      <p class="voice-name">Алёна</p>
+      <p class="voice-desc">Мягкий</p>
+    </div>
+    <div class="voice-item">
+      <p class="voice-emoji">👨</p>
+      <p class="voice-name">Айдар</p>
+      <p class="voice-desc">Silero TTS</p>
+    </div>
+  </div>
+</div>
+</body>
+</html>

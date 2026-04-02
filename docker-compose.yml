@@ -1,0 +1,80 @@
+# ===========================================
+# СПС Голосовая Студия
+# ГУП Петербургский метрополитен
+# Docker Compose Configuration
+# ===========================================
+# Usage:
+#   Development: docker compose up -d
+#   Production:  docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+# ===========================================
+
+services:
+  # ===========================================
+  # Next.js Application
+  # ===========================================
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tts-studio
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - APP_PASSWORD=${APP_PASSWORD:-dragonsvitex2026}
+      - SESSION_SECRET=${SESSION_SECRET:-change-this-in-production}
+      - DATABASE_URL=file:/app/data/tts.db
+      - TTS_SERVICE_URL=http://tts-service:3031
+    volumes:
+      - tts-data:/app/data
+      - tts-audio:/app/public/audio
+    depends_on:
+      tts-service:
+        condition: service_healthy
+    networks:
+      - tts-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/auth"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # ===========================================
+  # Python TTS Service
+  # ===========================================
+  tts-service:
+    build:
+      context: ./mini-services/tts-service
+      dockerfile: Dockerfile
+    container_name: tts-service
+    restart: unless-stopped
+    expose:
+      - "3031"
+    volumes:
+      - tts-audio:/app/public/audio
+    networks:
+      - tts-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3031/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+
+# ===========================================
+# Networks
+# ===========================================
+networks:
+  tts-network:
+    driver: bridge
+
+# ===========================================
+# Volumes
+# ===========================================
+volumes:
+  tts-data:
+    driver: local
+  tts-audio:
+    driver: local

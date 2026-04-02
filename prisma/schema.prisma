@@ -1,0 +1,36 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model TTSGeneration {
+  id            String   @id @default(cuid())
+  text          String
+  voice         String   @default("svetlana")
+  speed         Float    @default(1.0)
+  volume        Float    @default(1.0)
+  format        String   @default("wav")
+  audioPath     String?
+  duration      Float?
+  characterCount Int
+  createdAt     DateTime @default(now())
+
+  @@index([voice])
+  @@index([createdAt(sort: Desc)])
+  @@map("tts_generations")
+}
+
+model TelegramConfig {
+  id        String   @id @default(cuid())
+  botToken  String
+  chatId    String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("telegram_config")
+}

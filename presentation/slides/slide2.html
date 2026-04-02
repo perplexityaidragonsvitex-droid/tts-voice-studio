@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+html { background: #FFFFFF; }
+body {
+  width: 720pt; height: 405pt; margin: 0; padding: 0;
+  font-family: Arial, sans-serif;
+  display: flex; flex-direction: column;
+  background: #FFFFFF;
+}
+.header {
+  background: #0066CC;
+  padding: 15pt 30pt;
+}
+.header-title {
+  color: #FFFFFF;
+  font-size: 24pt;
+  font-weight: bold;
+  margin: 0;
+}
+.content {
+  display: flex;
+  flex: 1;
+  padding: 20pt 30pt;
+}
+.left-col { flex: 1; padding-right: 20pt; }
+.right-col {
+  flex: 0.8;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.description {
+  color: #333333;
+  font-size: 12pt;
+  line-height: 1.5;
+  margin: 0 0 15pt 0;
+}
+.feature-box {
+  background: #F5F7FA;
+  border-left: 3pt solid #0066CC;
+  padding: 10pt 15pt;
+  margin: 8pt 0;
+}
+.feature-title {
+  color: #0066CC;
+  font-size: 12pt;
+  font-weight: bold;
+  margin: 0 0 3pt 0;
+}
+.feature-text {
+  color: #555555;
+  font-size: 10pt;
+  margin: 0;
+}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1 class="header-title">О проекте</h1>
+</div>
+<div class="content">
+  <div class="left-col">
+    <p class="description">СПС Голосовая Студия — веб-приложение для профессионального синтеза речи с российскими голосами и стандартом АИ-22.</p>
+    <div class="feature-box">
+      <p class="feature-title">8 голосов</p>
+      <p class="feature-text">Мужские и женские с эмоциями</p>
+    </div>
+    <div class="feature-box">
+      <p class="feature-title">Стандарт АИ-22</p>
+      <p class="feature-text">Профессиональное качество</p>
+    </div>
+    <div class="feature-box">
+      <p class="feature-title">Telegram</p>
+      <p class="feature-text">Автоотправка анонсов</p>
+    </div>
+  </div>
+  <div class="right-col">
+    <img src="/home/z/my-project/presentation/slides/speaker-icon.png" style="width: 120pt; height: 120pt; opacity: 0.7;">
+  </div>
+</div>
+</body>
+</html>
