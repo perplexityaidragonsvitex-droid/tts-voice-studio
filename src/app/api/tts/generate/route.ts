@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { withAuth } from '@/lib/auth-middleware';
 import { checkRateLimit, getRateLimitHeaders } from '@/lib/rate-limit';
 
 const TTS_SERVICE_URL = process.env.TTS_SERVICE_URL || 'http://localhost:3031';
@@ -10,7 +11,7 @@ function getClientIdentifier(req: NextRequest): string {
   return `tts:${ip}`;
 }
 
-export async function POST(req: NextRequest) {
+async function handlePost(req: NextRequest) {
   const identifier = getClientIdentifier(req);
   const rateLimit = checkRateLimit(identifier);
   
@@ -111,7 +112,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function GET() {
+async function handleGet() {
   try {
     const response = await fetch(`${TTS_SERVICE_URL}/voices`);
     const data = await response.json();
@@ -130,3 +131,6 @@ export async function GET() {
     });
   }
 }
+
+export const POST = withAuth(handlePost);
+export const GET = handleGet;

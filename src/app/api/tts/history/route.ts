@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { withAuth } from '@/lib/auth-middleware';
 import fs from 'fs';
 import path from 'path';
 
-export async function GET(req: NextRequest) {
+async function handleGet(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const limit = parseInt(searchParams.get('limit') || '20');
@@ -33,7 +34,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
-export async function DELETE(req: NextRequest) {
+async function handleDelete(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');
@@ -45,7 +46,6 @@ export async function DELETE(req: NextRequest) {
       );
     }
 
-    // Get the generation to find audio file
     const generation = await db.tTSGeneration.findUnique({
       where: { id },
     });
@@ -57,7 +57,6 @@ export async function DELETE(req: NextRequest) {
       );
     }
 
-    // Delete audio file if exists
     if (generation.audioPath) {
       const audioPath = path.join(process.cwd(), 'public', generation.audioPath);
       if (fs.existsSync(audioPath)) {
@@ -65,7 +64,6 @@ export async function DELETE(req: NextRequest) {
       }
     }
 
-    // Delete from database
     await db.tTSGeneration.delete({
       where: { id },
     });
@@ -79,3 +77,6 @@ export async function DELETE(req: NextRequest) {
     );
   }
 }
+
+export const GET = withAuth(handleGet);
+export const DELETE = withAuth(handleDelete);

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+import { registerSession, removeSession, activeSessions } from '@/lib/auth-middleware';
 
 const SESSION_COOKIE_NAME = 'tts_session';
 const SESSION_MAX_AGE = 60 * 60 * 24 * 7;
@@ -18,8 +19,6 @@ function generateSessionToken(): string {
   crypto.getRandomValues(array);
   return Array.from(array, b => b.toString(16).padStart(2, '0')).join('');
 }
-
-const activeSessions = new Map<string, { createdAt: number }>();
 
 function isValidSession(token: string): boolean {
   const session = activeSessions.get(token);
@@ -70,7 +69,7 @@ export async function POST(req: NextRequest) {
     }
     
     const sessionToken = generateSessionToken();
-    activeSessions.set(sessionToken, { createdAt: Date.now() });
+    registerSession(sessionToken);
     
     const response = NextResponse.json({ 
       success: true, 
@@ -101,7 +100,7 @@ export async function DELETE() {
     const sessionToken = cookieStore.get(SESSION_COOKIE_NAME)?.value;
     
     if (sessionToken) {
-      activeSessions.delete(sessionToken);
+      removeSession(sessionToken);
     }
     
     const response = NextResponse.json({ 
