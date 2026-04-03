@@ -83,7 +83,7 @@ RUN mkdir -p /app/public/audio /app/data && \
     printf '#!/bin/bash\n\
 set -e\n\
 echo "Starting TTS service..."\n\
-cd /app/tts-service && PYTHONIOENCODING=utf-8 PYTHONPATH=/python-packages python3 index.py &\n\
+cd /app/tts-service && PYTHONIOENCODING=utf-8 PYTHONPATH=/python-packages AUDIO_DIR=/app/public/audio python3 index.py &\n\
 sleep 3\n\
 echo "Running Prisma migrations..."\n\
 cd /app && npx prisma db push --skip-generate || true\n\

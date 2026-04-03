@@ -55,10 +55,12 @@ except ImportError:
     pass
 
 # Порт сервиса
-PORT = 3031
+PORT = int(os.environ.get('TTS_PORT', 3031))
 
-# Директория для аудио файлов
-AUDIO_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'public', 'audio')
+# Директория для аудио файлов (настраивается через ENV для Docker)
+AUDIO_DIR = os.environ.get('AUDIO_DIR') or os.path.join(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'public', 'audio'
+)
 os.makedirs(AUDIO_DIR, exist_ok=True)
 
 # Профессиональные русские голоса
