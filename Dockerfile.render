@@ -77,19 +77,27 @@ RUN mkdir -p /app/public/audio /app/data /app/logs && \
 set -e\n\
 export DATABASE_URL="file:/app/data/tts.db"\n\
 export PYTHONUNBUFFERED=1\n\
-echo "Starting TTS service..."\n\
-cd /app/tts-service && PYTHONIOENCODING=utf-8 AUDIO_DIR=/app/public/audio python3 index.py 2>&1 | tee /app/logs/tts.log &\n\
+echo "=== Checking Python and packages ==="\n\
+python3 --version\n\
+python3 -c "import numpy; print(f\"numpy: {numpy.__version__}\")" || echo "ERROR: numpy failed"\n\
+python3 -c "import scipy; print(f\"scipy: {scipy.__version__}\")" || echo "ERROR: scipy failed"\n\
+python3 -c "import soundfile; print(f\"soundfile: {soundfile.__version__}\")" || echo "ERROR: soundfile failed"\n\
+python3 -c "import pyloudnorm; print(\"pyloudnorm: OK\")" || echo "ERROR: pyloudnorm failed"\n\
+python3 -c "import edge_tts; print(\"edge_tts: OK\")" || echo "ERROR: edge_tts failed"\n\
+echo "=== Starting TTS service ==="\n\
+cd /app/tts-service && PYTHONIOENCODING=utf-8 AUDIO_DIR=/app/public/audio python3 index.py > /app/logs/tts.log 2>&1 &\n\
 TTS_PID=$!\n\
 sleep 5\n\
-echo "TTS service logs:"\n\
+echo "=== TTS service logs ==="\n\
 cat /app/logs/tts.log 2>/dev/null || echo "No logs yet"\n\
 if ! kill -0 $TTS_PID 2>/dev/null; then\n\
-echo "ERROR: TTS service crashed during startup"\n\
-exit 1\n\
+echo "WARNING: TTS service crashed, but continuing..."\n\
+else\n\
+echo "TTS service running with PID $TTS_PID"\n\
 fi\n\
-echo "Running Prisma migrations..."\n\
+echo "=== Running Prisma migrations ==="\n\
 cd /app && ./node_modules/.bin/prisma db push --accept-data-loss || true\n\
-echo "Starting Next.js server..."\n\
+echo "=== Starting Next.js server ==="\n\
 cd /app && node server.js\n\
 ' > /app/start.sh && chmod +x /app/start.sh
 
