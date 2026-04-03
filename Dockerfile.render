@@ -67,14 +67,16 @@ COPY --from=builder /app/prisma ./prisma
 COPY --from=deps /app/node_modules ./node_modules
 
 # Create directories and startup script
-RUN mkdir -p /app/public/audio /app/data && \
+RUN mkdir -p /app/public/audio /app/data /app/logs && \
     printf '#!/bin/bash\n\
 set -e\n\
 echo "Starting TTS service..."\n\
-cd /app/tts-service && PYTHONIOENCODING=utf-8 AUDIO_DIR=/app/public/audio python3 index.py &\n\
-sleep 3\n\
+cd /app/tts-service && PYTHONIOENCODING=utf-8 AUDIO_DIR=/app/public/audio python3 index.py > /app/logs/tts.log 2>&1 &\n\
+sleep 5\n\
+echo "TTS service logs:"\n\
+cat /app/logs/tts.log || true\n\
 echo "Running Prisma migrations..."\n\
-cd /app && ./node_modules/.bin/prisma db push --skip-generate || true\n\
+cd /app && ./node_modules/.bin/prisma db push --accept-data-loss || true\n\
 echo "Starting Next.js server..."\n\
 cd /app && node server.js\n\
 ' > /app/start.sh && chmod +x /app/start.sh
