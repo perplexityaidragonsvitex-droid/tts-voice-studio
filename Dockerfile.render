@@ -53,19 +53,6 @@ RUN apk add --no-cache \
     python3-dev \
     && pip install --no-cache-dir --break-system-packages edge-tts pyloudnorm soundfile
 
-# Create directories and startup script
-RUN mkdir -p /app/public/audio /app/data && \
-    printf '#!/bin/bash\n\
-set -e\n\
-echo "Starting TTS service..."\n\
-cd /app/tts-service && PYTHONIOENCODING=utf-8 AUDIO_DIR=/app/public/audio python3 index.py &\n\
-sleep 3\n\
-echo "Running Prisma migrations..."\n\
-cd /app && npx prisma db push --skip-generate || true\n\
-echo "Starting Next.js server..."\n\
-cd /app && node server.js\n\
-' > /app/start.sh && chmod +x /app/start.sh
-
 # Copy TTS service
 COPY mini-services/tts-service/index.py ./tts-service/index.py
 COPY mini-services/tts-service/cleanup_audio.py ./tts-service/cleanup_audio.py
@@ -75,6 +62,22 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/prisma ./prisma
+
+# Copy node_modules for Prisma CLI (migrations)
+COPY --from=deps /app/node_modules ./node_modules
+
+# Create directories and startup script
+RUN mkdir -p /app/public/audio /app/data && \
+    printf '#!/bin/bash\n\
+set -e\n\
+echo "Starting TTS service..."\n\
+cd /app/tts-service && PYTHONIOENCODING=utf-8 AUDIO_DIR=/app/public/audio python3 index.py &\n\
+sleep 3\n\
+echo "Running Prisma migrations..."\n\
+cd /app && ./node_modules/.bin/prisma db push --skip-generate || true\n\
+echo "Starting Next.js server..."\n\
+cd /app && node server.js\n\
+' > /app/start.sh && chmod +x /app/start.sh
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
