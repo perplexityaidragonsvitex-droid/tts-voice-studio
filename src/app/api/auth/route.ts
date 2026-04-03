@@ -42,7 +42,20 @@ export async function GET() {
       return NextResponse.json({ authenticated: true });
     }
     
-    return NextResponse.json({ authenticated: false });
+    // Авто-вход: создаём новую сессию автоматически
+    const newToken = generateSessionToken();
+    registerSession(newToken);
+    
+    const response = NextResponse.json({ authenticated: true });
+    response.cookies.set(SESSION_COOKIE_NAME, newToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: SESSION_MAX_AGE,
+      path: '/',
+    });
+    
+    return response;
   } catch {
     return NextResponse.json({ authenticated: false });
   }

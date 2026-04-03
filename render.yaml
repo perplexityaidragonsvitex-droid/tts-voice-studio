@@ -1,6 +1,7 @@
 # ===========================================
 # Render Blueprint - СПС Голосовая Студия
 # Автоматический деплой с GitHub
+# Оптимизировано для free tier (512MB RAM)
 # ===========================================
 
 services:
@@ -14,8 +15,8 @@ services:
     dockerContext: .
     
     # Ресурсы
-    plan: starter  # free tier, можно изменить на 'starter' ($7/мес)
-    region: frankfurt  # oregon, frankfurt, singapore, ohio
+    plan: free
+    region: oregon
     
     # Health check
     healthCheckPath: /api/auth
@@ -31,34 +32,8 @@ services:
       - key: TTS_SERVICE_URL
         value: http://localhost:3031
       - key: APP_PASSWORD
-        generateValue: true  # Render сгенерирует безопасный пароль
+        generateValue: true
       - key: SESSION_SECRET
-        generateValue: true  # Render сгенерирует безопасный секрет
+        generateValue: true
       - key: DATABASE_URL
-        fromDatabase:
-          name: tts-db
-          property: connectionString
-
-# ===========================================
-# PostgreSQL Database
-# ===========================================
-databases:
-  - name: tts-db
-    databaseName: tts_studio
-    user: tts_user
-    plan: free  # бесплатно, 90 дней срок действия
-    region: frankfurt
-
-# ===========================================
-# Дополнительно (опционально):
-# Cron job для очистки старых аудио
-# ===========================================
-# - type: cron
-#   name: cleanup-audio
-#   runtime: docker
-#   dockerfilePath: ./Dockerfile.render
-#   schedule: "0 3 * * *"  # каждый день в 3:00 UTC
-#   dockerCommand: python3 /app/tts-service/cleanup_audio.py --days 30
-#   envVars:
-#     - key: PYTHONIOENCODING
-#       value: utf-8
+        value: "file:/app/data/tts.db"

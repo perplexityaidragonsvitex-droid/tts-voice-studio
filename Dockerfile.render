@@ -1,5 +1,6 @@
 # ===========================================
 # СПС Голосовая Студия - Render.com (с Python TTS)
+# Оптимизировано для free tier (512MB RAM)
 # ===========================================
 
 # ===========================================
@@ -14,7 +15,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 COPY mini-services/tts-service/requirements.txt ./
-RUN pip install --no-cache-dir --target=/python-packages -r requirements.txt
+RUN pip install --no-cache-dir --no-compile --target=/python-packages -r requirements.txt
 
 COPY mini-services/tts-service/index.py ./
 COPY mini-services/tts-service/cleanup_audio.py ./
@@ -22,19 +23,17 @@ COPY mini-services/tts-service/cleanup_audio.py ./
 # ===========================================
 # Stage 2: Node.js Dependencies
 # ===========================================
-FROM oven/bun:1 AS deps
+FROM node:20-alpine AS deps
 
 WORKDIR /app
 
-COPY package.json bun.lock* ./
-COPY prisma ./prisma/
-
-RUN bun install --frozen-lockfile
+COPY package.json package-lock.json* ./
+RUN npm ci --ignore-scripts
 
 # ===========================================
 # Stage 3: Builder
 # ===========================================
-FROM oven/bun:1 AS builder
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 
@@ -43,23 +42,25 @@ COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
+ENV NEXT_DISABLE_ESLINT=1
+ENV NEXT_DISABLE_TYPE_CHECK=1
 
-RUN bun run build
+RUN NODE_OPTIONS="--max-old-space-size=1536" npm run build
 
 # ===========================================
 # Stage 4: Runner (Production)
 # ===========================================
-FROM oven/bun:1 AS runner
+FROM node:20-alpine AS runner
 
 WORKDIR /app
 
 # Install Python and FFmpeg for TTS
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apk add --no-cache \
     python3 \
-    python3-pip \
+    py3-pip \
     ffmpeg \
     curl \
-    && rm -rf /var/lib/apt/lists/*
+    bash
 
 # Copy Python packages
 COPY --from=tts-builder /python-packages /python-packages
@@ -74,24 +75,27 @@ COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/prisma ./prisma
 
+# Install Prisma runtime for SQLite
+RUN npm install --no-save prisma @prisma/client
+
 # Create directories and startup script
 RUN mkdir -p /app/public/audio /app/data && \
-    echo '#!/bin/bash\n\
+    printf '#!/bin/bash\n\
 set -e\n\
 echo "Starting TTS service..."\n\
 cd /app/tts-service && PYTHONIOENCODING=utf-8 PYTHONPATH=/python-packages python3 index.py &\n\
-sleep 5\n\
+sleep 3\n\
 echo "Running Prisma migrations..."\n\
-cd /app && bunx prisma db push --skip-generate || true\n\
+cd /app && npx prisma db push --skip-generate || true\n\
 echo "Starting Next.js server..."\n\
-cd /app && bun server.js\n\
+cd /app && node server.js\n\
 ' > /app/start.sh && chmod +x /app/start.sh
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV PYTHONIOENCODING=utf-8
 ENV TTS_SERVICE_URL=http://localhost:3031
-ENV DATABASE_URL=file:/app/data/tts.db
+ENV DATABASE_URL="file:/app/data/tts.db"
 
 EXPOSE 3000
 
