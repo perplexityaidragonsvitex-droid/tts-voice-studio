@@ -39,19 +39,24 @@ FROM node:20-alpine AS runner
 
 WORKDIR /app
 
-# Install Python, FFmpeg and build tools for numpy
+# Install Python, FFmpeg and build dependencies
+# Use pip-only packages (no Alpine Python packages to avoid conflicts)
 RUN apk add --no-cache \
     python3 \
     py3-pip \
-    py3-numpy \
-    py3-scipy \
-    libsndfile \
     ffmpeg \
     curl \
     bash \
-    g++ \
+    gcc \
+    musl-dev \
     python3-dev \
-    && pip install --no-cache-dir --break-system-packages edge-tts pyloudnorm soundfile
+    libsndfile-dev \
+    && pip install --no-cache-dir --break-system-packages \
+    edge-tts \
+    numpy>=1.24.0 \
+    scipy>=1.11.0 \
+    soundfile>=0.12.0 \
+    pyloudnorm>=0.1.1
 
 # Copy TTS service
 COPY mini-services/tts-service/index.py ./tts-service/index.py
@@ -66,16 +71,22 @@ COPY --from=builder /app/prisma ./prisma
 # Copy node_modules for Prisma CLI (migrations)
 COPY --from=deps /app/node_modules ./node_modules
 
-# Create directories and startup script
+# Create directories and startup script with proper error handling
 RUN mkdir -p /app/public/audio /app/data /app/logs && \
     printf '#!/bin/bash\n\
 set -e\n\
 export DATABASE_URL="file:/app/data/tts.db"\n\
+export PYTHONUNBUFFERED=1\n\
 echo "Starting TTS service..."\n\
-cd /app/tts-service && PYTHONIOENCODING=utf-8 AUDIO_DIR=/app/public/audio python3 index.py > /app/logs/tts.log 2>&1 &\n\
+cd /app/tts-service && PYTHONIOENCODING=utf-8 AUDIO_DIR=/app/public/audio python3 index.py 2>&1 | tee /app/logs/tts.log &\n\
+TTS_PID=$!\n\
 sleep 5\n\
 echo "TTS service logs:"\n\
-cat /app/logs/tts.log || true\n\
+cat /app/logs/tts.log 2>/dev/null || echo "No logs yet"\n\
+if ! kill -0 $TTS_PID 2>/dev/null; then\n\
+echo "ERROR: TTS service crashed during startup"\n\
+exit 1\n\
+fi\n\
 echo "Running Prisma migrations..."\n\
 cd /app && ./node_modules/.bin/prisma db push --accept-data-loss || true\n\
 echo "Starting Next.js server..."\n\
@@ -85,6 +96,7 @@ cd /app && node server.js\n\
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV PYTHONIOENCODING=utf-8
+ENV PYTHONUNBUFFERED=1
 ENV TTS_SERVICE_URL=http://localhost:3031
 ENV DATABASE_URL="file:/app/data/tts.db"
 

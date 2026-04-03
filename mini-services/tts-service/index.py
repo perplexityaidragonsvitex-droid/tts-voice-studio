@@ -34,9 +34,16 @@ if sys.platform == 'win32':
     sys.stdout.reconfigure(encoding='utf-8')
     sys.stderr.reconfigure(encoding='utf-8')
 
-import numpy as np
-import soundfile as sf
-import pyloudnorm as pyln
+# Import audio processing libraries with error handling
+try:
+    import numpy as np
+    import soundfile as sf
+    import pyloudnorm as pyln
+    print("✅ Audio processing libraries loaded")
+except ImportError as e:
+    print(f"❌ Failed to import audio libraries: {e}")
+    print("Install with: pip install numpy soundfile pyloudnorm scipy")
+    sys.exit(1)
 
 # Попробуем импортировать разные TTS движки
 TTS_ENGINE = None
