@@ -76,7 +76,7 @@ sleep 5\n\
 echo "TTS service logs:"\n\
 cat /app/logs/tts.log || true\n\
 echo "Running Prisma migrations..."\n\
-cd /app && ./node_modules/.bin/prisma db push --accept-data-loss || true\n\
+cd /app && ./node_modules/.bin/prisma db push --url="file:/app/data/tts.db" --accept-data-loss || true\n\
 echo "Starting Next.js server..."\n\
 cd /app && node server.js\n\
 ' > /app/start.sh && chmod +x /app/start.sh
