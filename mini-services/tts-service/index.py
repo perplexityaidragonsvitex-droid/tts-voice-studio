@@ -494,14 +494,14 @@ class TTSHandler(BaseHTTPRequestHandler):
                 if os.path.exists(temp_path):
                     os.remove(temp_path)
                 
-                self.send_json_response({
-                    'success': True,
-                    'audioUrl': f"/audio/{filename}",
-                    'voice': voice,
-                    'voiceName': voice_info['name'],
-                    'characterCount': len(text),
-                    'format': 'MP3',
-                    'engine': used_engine,
+self.send_json_response({
+'success': True,
+'audioUrl': f"/api/audio/{filename}",
+'voice': voice,
+'voiceName': voice_info['name'],
+'characterCount': len(text),
+'format': 'MP3',
+'engine': used_engine,
                     'standard': 'АИ-22',
                     'audioStats': stats
                 })
