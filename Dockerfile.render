@@ -45,13 +45,13 @@ RUN apk add --no-cache \
     py3-pip \
     py3-numpy \
     py3-scipy \
-    py3-soundfile \
+    libsndfile \
     ffmpeg \
     curl \
     bash \
     g++ \
     python3-dev \
-    && pip install --no-cache-dir --break-system-packages edge-tts pyloudnorm
+    && pip install --no-cache-dir --break-system-packages edge-tts pyloudnorm soundfile
 
 # Create directories and startup script
 RUN mkdir -p /app/public/audio /app/data && \
