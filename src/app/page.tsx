@@ -347,27 +347,34 @@ const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
   if (audioDuration === 0) return;
 
   isSeeking.current = true;
+  
   const rect = progressRef.current.getBoundingClientRect();
   const percent = (e.clientX - rect.left) / rect.width;
-  const newTime = percent * audioDuration;
+  const newTime = Math.max(0, Math.min(audioDuration, percent * audioDuration));
 
-  setCurrentTime(newTime);
   audioRef.current.currentTime = newTime;
+  setCurrentTime(newTime);
+  
+  isSeeking.current = false;
 };
 
-  const handleSkipBack = () => {
-    if (!audioRef.current) return;
-    const newTime = Math.max(0, audioRef.current.currentTime - 10);
-    audioRef.current.currentTime = newTime;
-    setCurrentTime(newTime);
-  };
+const handleSkipBack = () => {
+  if (!audioRef.current) return;
+  const wasPlaying = !audioRef.current.paused;
+  const newTime = Math.max(0, audioRef.current.currentTime - 10);
+  audioRef.current.currentTime = newTime;
+  setCurrentTime(newTime);
+  if (!wasPlaying) audioRef.current.pause();
+};
 
-  const handleSkipForward = () => {
-    if (!audioRef.current) return;
-    const newTime = Math.min(duration, audioRef.current.currentTime + 10);
-    audioRef.current.currentTime = newTime;
-    setCurrentTime(newTime);
-  };
+const handleSkipForward = () => {
+  if (!audioRef.current) return;
+  const wasPlaying = !audioRef.current.paused;
+  const newTime = Math.min(audioRef.current.duration || duration, audioRef.current.currentTime + 10);
+  audioRef.current.currentTime = newTime;
+  setCurrentTime(newTime);
+  if (!wasPlaying) audioRef.current.pause();
+};
 
   const handleDownload = () => {
     if (!audioUrl) return;
