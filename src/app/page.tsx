@@ -176,10 +176,11 @@ export default function TTSStudio() {
   const [serviceStatus, setServiceStatus] = useState<'checking' | 'online' | 'offline'>('checking');
   const [filterGender, setFilterGender] = useState<'all' | 'male' | 'female'>('all');
   
-  // Состояние аудиоплеера
-  const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(0);
-  const [audioStats, setAudioStats] = useState<any>(null);
+// Состояние аудиоплеера
+const [currentTime, setCurrentTime] = useState(0);
+const [duration, setDuration] = useState(0);
+const [audioStats, setAudioStats] = useState<any>(null);
+const isSeeking = useRef(false);
   
   // Telegram settings
   const [botToken, setBotToken] = useState('');
@@ -329,26 +330,34 @@ export default function TTSStudio() {
     }
   };
 
-  const handleTimeUpdate = () => {
-    if (!audioRef.current) return;
-    setCurrentTime(audioRef.current.currentTime);
-  };
+const handleTimeUpdate = () => {
+  if (!audioRef.current || isSeeking.current) return;
+  setCurrentTime(audioRef.current.currentTime);
+};
 
   const handleLoadedMetadata = () => {
     if (!audioRef.current) return;
     setDuration(audioRef.current.duration);
   };
 
-  const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!progressRef.current || !audioRef.current) return;
-    
-    const rect = progressRef.current.getBoundingClientRect();
-    const percent = (e.clientX - rect.left) / rect.width;
-    const newTime = percent * duration;
-    
-    setCurrentTime(newTime);
-    audioRef.current.currentTime = newTime;
-  };
+const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
+  if (!progressRef.current || !audioRef.current) return;
+
+  const audioDuration = audioRef.current.duration || duration;
+  if (audioDuration === 0) return;
+
+  isSeeking.current = true;
+  const rect = progressRef.current.getBoundingClientRect();
+  const percent = (e.clientX - rect.left) / rect.width;
+  const newTime = percent * audioDuration;
+
+  setCurrentTime(newTime);
+  audioRef.current.currentTime = newTime;
+  
+  setTimeout(() => {
+    isSeeking.current = false;
+  }, 100);
+};
 
   const handleSkipBack = () => {
     if (!audioRef.current) return;

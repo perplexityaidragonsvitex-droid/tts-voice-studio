@@ -108,9 +108,7 @@ ENV PYTHONUNBUFFERED=1
 ENV TTS_SERVICE_URL=http://localhost:3031
 ENV DATABASE_URL="file:/app/data/tts.db"
 
-EXPOSE 3000
-
-ENV PORT=3000
+ENV PORT=10000
 ENV HOSTNAME="0.0.0.0"
 
 CMD ["/bin/bash", "/app/start.sh"]
