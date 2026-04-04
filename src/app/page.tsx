@@ -353,10 +353,6 @@ const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
 
   setCurrentTime(newTime);
   audioRef.current.currentTime = newTime;
-  
-  setTimeout(() => {
-    isSeeking.current = false;
-  }, 100);
 };
 
   const handleSkipBack = () => {
@@ -496,15 +492,17 @@ const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
     <div className="min-h-screen bg-gradient-to-br from-[#0a1628] via-[#0d1f3c] to-[#0a1628] text-white flex flex-col">
       {/* Audio Element */}
       {audioUrl && (
-        <audio
-          ref={audioRef}
-          src={audioUrl}
-          onEnded={() => setIsPlaying(false)}
-          onPlay={() => setIsPlaying(true)}
-          onPause={() => setIsPlaying(false)}
-          onTimeUpdate={handleTimeUpdate}
-          onLoadedMetadata={handleLoadedMetadata}
-        />
+<audio
+  ref={audioRef}
+  src={audioUrl}
+  onEnded={() => setIsPlaying(false)}
+  onPlay={() => setIsPlaying(true)}
+  onPause={() => setIsPlaying(false)}
+  onTimeUpdate={handleTimeUpdate}
+  onLoadedMetadata={handleLoadedMetadata}
+  onSeeked={() => { isSeeking.current = false; }}
+  onSeeking={() => { isSeeking.current = true; }}
+/>
       )}
 
       {/* Header */}
